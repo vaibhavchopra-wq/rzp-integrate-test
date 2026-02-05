@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TechStore</title>
+  <title>TechStore - Premium Electronics</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,78 +14,366 @@
     <div class="container">
       <div class="header-content">
         <a href="/" class="logo">
-          <span class="logo-icon">🛍️</span>
+          <span class="logo-icon">⚡</span>
           <span class="logo-text">TechStore</span>
         </a>
-        <nav class="nav">
-          <a href="#products" class="nav-link">Products</a>
+        
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search products..." autocomplete="off">
+          <button class="search-btn" onclick="performSearch()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+          </button>
+          <div id="search-suggestions" class="search-suggestions"></div>
+        </div>
+        
+        <nav class="nav-links">
+          <a href="#" onclick="showSection('categories-section')">Categories</a>
+          <a href="#" onclick="showSection('products-section')">Products</a>
+          <a href="#" onclick="showSection('orders-section')">My Orders</a>
         </nav>
-        <button class="cart-btn" id="cart-toggle">
-          <span class="cart-icon">🛒</span>
-          <span class="cart-count" id="cart-count">0</span>
-        </button>
+        
+        <div class="header-actions">
+          <button class="icon-btn wishlist-btn" onclick="openWishlist()" title="Wishlist">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span class="badge" id="wishlist-count">0</span>
+          </button>
+          <button class="icon-btn cart-btn" onclick="openCart()" title="Cart">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="badge" id="cart-count">0</span>
+          </button>
+          <button class="icon-btn user-btn" onclick="toggleUserMenu()" title="Account">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="main">
-    <section class="hero">
+  <main>
+    <!-- Hero Section -->
+    <section id="hero-section" class="hero">
       <div class="container">
-        <h1 class="hero-title">TechStore</h1>
-        <p class="hero-subtitle">Shop the latest tech products</p>
+        <div class="hero-content">
+          <h1>Premium Electronics</h1>
+          <p>Discover the latest gadgets and technology at unbeatable prices</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-lg" onclick="showSection('products-section')">Shop Now</button>
+            <button class="btn btn-outline btn-lg" onclick="showSection('categories-section')">Browse Categories</button>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span id="stat-products">0</span><label>Products</label></div>
+          <div class="stat"><span id="stat-categories">0</span><label>Categories</label></div>
+          <div class="stat"><span>24/7</span><label>Support</label></div>
+        </div>
       </div>
     </section>
 
-    <section class="products-section" id="products">
+    <!-- Categories Section -->
+    <section id="categories-section" class="section">
       <div class="container">
-        <h2 class="section-title">Products</h2>
-        <div class="products-grid" id="products-grid"></div>
+        <div class="section-header">
+          <h2>Shop by Category</h2>
+          <p>Find exactly what you're looking for</p>
+        </div>
+        <div id="categories-grid" class="categories-grid"></div>
       </div>
     </section>
+
+    <!-- Featured Products Section -->
+    <section id="featured-section" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Featured Products</h2>
+          <p>Our handpicked selection of premium items</p>
+        </div>
+        <div id="featured-products" class="products-grid"></div>
+      </div>
+    </section>
+
+    <!-- All Products Section -->
+    <section id="products-section" class="section hidden">
+      <div class="container">
+        <div class="section-header">
+          <h2>All Products</h2>
+          <div class="filter-bar">
+            <select id="category-filter" onchange="filterProducts()">
+              <option value="">All Categories</option>
+            </select>
+            <select id="sort-filter" onchange="filterProducts()">
+              <option value="">Sort By</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="rating">Best Rated</option>
+              <option value="newest">Newest</option>
+            </select>
+            <div class="price-filter">
+              <input type="number" id="min-price" placeholder="Min ₹" onchange="filterProducts()">
+              <input type="number" id="max-price" placeholder="Max ₹" onchange="filterProducts()">
+            </div>
+          </div>
+        </div>
+        <div id="products-grid" class="products-grid"></div>
+        <div id="pagination" class="pagination"></div>
+      </div>
+    </section>
+
+    <!-- Search Results Section -->
+    <section id="search-section" class="section hidden">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="search-title">Search Results</h2>
+        </div>
+        <div id="search-results" class="products-grid"></div>
+      </div>
+    </section>
+
+    <!-- Orders Section -->
+    <section id="orders-section" class="section hidden">
+      <div class="container">
+        <div class="section-header">
+          <h2>My Orders</h2>
+        </div>
+        <div id="orders-list" class="orders-list">
+          <p class="empty-state">No orders yet. Start shopping!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="modal hidden">
+      <div class="modal-overlay" onclick="closeProductModal()"></div>
+      <div class="modal-content product-detail">
+        <button class="modal-close" onclick="closeProductModal()">&times;</button>
+        <div id="product-detail-content"></div>
+      </div>
+    </div>
   </main>
 
-  <div class="cart-overlay" id="cart-overlay"></div>
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay hidden" id="cart-overlay" onclick="closeCart()"></div>
   <aside class="cart-sidebar" id="cart-sidebar">
     <div class="cart-header">
       <h2>Shopping Cart</h2>
-      <button class="close-btn" id="cart-close">&times;</button>
+      <button class="close-btn" onclick="closeCart()">&times;</button>
     </div>
     <div class="cart-items" id="cart-items"></div>
-    <div class="cart-footer" id="cart-footer"></div>
+    <div class="cart-coupon">
+      <input type="text" id="coupon-input" placeholder="Enter coupon code">
+      <button class="btn btn-sm" onclick="applyCoupon()">Apply</button>
+    </div>
+    <div class="cart-summary">
+      <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal">₹0</span></div>
+      <div class="summary-row discount-row hidden" id="discount-row"><span>Discount</span><span id="cart-discount">-₹0</span></div>
+      <div class="summary-row"><span>Tax (18%)</span><span id="cart-tax">₹0</span></div>
+      <div class="summary-row total"><span>Total</span><span id="cart-total">₹0</span></div>
+    </div>
+    <button class="btn btn-primary btn-block checkout-btn" onclick="openCheckoutModal()">Proceed to Checkout</button>
   </aside>
 
-  <div class="modal-overlay" id="checkout-modal">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>Checkout</h2>
-        <button class="close-btn" id="modal-close">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="checkout-form">
-          <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" name="name" required placeholder="John Doe">
+  <!-- Wishlist Sidebar -->
+  <div class="wishlist-overlay hidden" id="wishlist-overlay" onclick="closeWishlist()"></div>
+  <aside class="cart-sidebar wishlist-sidebar" id="wishlist-sidebar">
+    <div class="cart-header">
+      <h2>Wishlist</h2>
+      <button class="close-btn" onclick="closeWishlist()">&times;</button>
+    </div>
+    <div class="cart-items" id="wishlist-items"></div>
+  </aside>
+
+  <!-- Checkout Modal -->
+  <div class="modal-overlay hidden" id="modal-overlay"></div>
+  <div class="checkout-modal hidden" id="checkout-modal">
+    <div class="modal-header">
+      <h2>Checkout</h2>
+      <button class="close-btn" onclick="closeCheckoutModal()">&times;</button>
+    </div>
+    <div class="checkout-steps">
+      <div class="step active" data-step="1">1. Shipping</div>
+      <div class="step" data-step="2">2. Review</div>
+      <div class="step" data-step="3">3. Payment</div>
+    </div>
+    <div class="checkout-content">
+      <!-- Step 1: Shipping -->
+      <div class="checkout-step active" id="step-1">
+        <h3>Shipping Information</h3>
+        <form id="shipping-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="customer-name" required>
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" id="customer-email" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone *</label>
+              <input type="tel" id="customer-phone" required>
+            </div>
+            <div class="form-group">
+              <label>Pincode *</label>
+              <input type="text" id="shipping-pincode" required onchange="calculateShipping()">
+            </div>
           </div>
           <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required placeholder="john@example.com">
+            <label>Address Line 1 *</label>
+            <input type="text" id="shipping-line1" required>
           </div>
           <div class="form-group">
-            <label for="phone">Phone</label>
-            <input type="tel" id="phone" name="phone" required placeholder="+91 9999999999">
+            <label>Address Line 2</label>
+            <input type="text" id="shipping-line2">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" id="shipping-city" required>
+            </div>
+            <div class="form-group">
+              <label>State *</label>
+              <input type="text" id="shipping-state" required>
+            </div>
           </div>
           <div class="form-group">
-            <label for="address">Shipping Address</label>
-            <textarea id="address" name="address" required placeholder="Enter your full address"></textarea>
+            <label>Shipping Method *</label>
+            <div id="shipping-methods" class="shipping-methods"></div>
           </div>
-          <div class="order-summary" id="order-summary"></div>
-          <button type="submit" class="btn btn-primary btn-block" id="pay-btn">Place Order</button>
+          <button type="button" class="btn btn-primary" onclick="goToStep(2)">Continue to Review</button>
         </form>
+      </div>
+      <!-- Step 2: Review -->
+      <div class="checkout-step" id="step-2">
+        <h3>Review Your Order</h3>
+        <div id="order-review"></div>
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="goToStep(1)">Back</button>
+          <button class="btn btn-primary" onclick="goToStep(3)">Continue to Payment</button>
+        </div>
+      </div>
+      <!-- Step 3: Payment -->
+      <div class="checkout-step" id="step-3">
+        <h3>Payment</h3>
+        <div id="order-summary-final"></div>
+        <div class="payment-info">
+          <p>Click the button below to proceed with payment.</p>
+          <p class="payment-note">Payment integration will be added here.</p>
+        </div>
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="goToStep(2)">Back</button>
+          <button class="btn btn-primary btn-lg" onclick="handleCheckout()">Place Order & Pay</button>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- User Menu Dropdown -->
+  <div id="user-menu" class="user-menu hidden">
+    <div id="guest-menu">
+      <button class="menu-item" onclick="showAuthModal('login')">Login</button>
+      <button class="menu-item" onclick="showAuthModal('register')">Register</button>
+    </div>
+    <div id="user-logged-menu" class="hidden">
+      <div class="menu-header">
+        <span id="user-name">User</span>
+      </div>
+      <button class="menu-item" onclick="showSection('orders-section')">My Orders</button>
+      <button class="menu-item" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeAuthModal()"></div>
+    <div class="modal-content auth-modal-content">
+      <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      <div id="login-form-container">
+        <h2>Login</h2>
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="login-email" required>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="login-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+        <p class="auth-switch">Don't have an account? <a href="#" onclick="showAuthModal('register')">Register</a></p>
+      </div>
+      <div id="register-form-container" class="hidden">
+        <h2>Register</h2>
+        <form id="register-form" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="register-name" required>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="register-email" required>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="register-phone" required>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="register-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="#" onclick="showAuthModal('login')">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>TechStore</h3>
+          <p>Your one-stop shop for premium electronics and gadgets.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="#">About Us</a>
+          <a href="#">Contact</a>
+          <a href="#">FAQs</a>
+        </div>
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <a href="#">Electronics</a>
+          <a href="#">Audio</a>
+          <a href="#">Wearables</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <p>support@techstore.com</p>
+          <p>+91 1800-123-4567</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 TechStore. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
   <div class="toast-container" id="toast-container"></div>
+
   <script src="js/app.js"></script>
 </body>
 </html>
