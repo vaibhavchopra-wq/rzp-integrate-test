@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ShopDjango - Premium E-Commerce{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Welcome to ShopDjango</h1>
+                <p class="lead mb-4">Discover premium products at unbeatable prices. Quality you can trust, delivered to your doorstep.</p>
+                <a href="{% url 'store:product_list' %}" class="btn btn-light btn-lg px-4">
+                    Shop Now <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="https://images.unsplash.com/photo-1607082349566-187342175e2f?w=500"
+                     alt="Shopping" class="img-fluid rounded shadow-lg" style="max-height: 400px; object-fit: cover;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Featured Products</h2>
+            <a href="{% url 'store:product_list' %}" class="btn btn-outline-primary">View All →</a>
+        </div>
+        <div class="row g-4">
+            {% for product in featured_products %}
+            <div class="col-sm-6 col-lg-3">
+                {% include 'store/_product_card.html' %}
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">No products available yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Categories -->
+{% if categories %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="fw-bold text-center mb-4">Shop by Category</h2>
+        <div class="row g-4">
+            {% for category in categories %}
+            <div class="col-md-4">
+                <a href="{% url 'store:product_list_by_category' category.slug %}" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center py-5">
+                            <h4 class="card-title">{{ category.name }}</h4>
+                            <p class="card-text text-muted">{{ category.products.count }} products</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Features -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="fw-bold text-center mb-5">Why Shop With Us</h2>
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <i class="bi bi-check-circle text-primary fs-1"></i>
+                </div>
+                <h5>Quality Products</h5>
+                <p class="text-muted">We source only the finest products from trusted manufacturers.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <i class="bi bi-truck text-primary fs-1"></i>
+                </div>
+                <h5>Fast Delivery</h5>
+                <p class="text-muted">Get your orders delivered within 2-5 business days.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <i class="bi bi-shield-check text-primary fs-1"></i>
+                </div>
+                <h5>Secure Payments</h5>
+                <p class="text-muted">Your transactions are protected with industry-standard encryption.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

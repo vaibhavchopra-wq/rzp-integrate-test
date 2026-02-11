@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - ShopDjango{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}">Products</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'store:product_list_by_category' product.category.slug %}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <!-- Product Image -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <img src="{{ product.image }}" class="card-img-top" alt="{{ product.name }}"
+                     style="max-height: 500px; object-fit: cover;">
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-lg-6">
+            <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
+            <h1 class="fw-bold">{{ product.name }}</h1>
+
+            <!-- Rating -->
+            <div class="d-flex align-items-center mb-3">
+                <div class="text-warning me-2">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= product.rating %}
+                        <i class="bi bi-star-fill"></i>
+                        {% else %}
+                        <i class="bi bi-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <span class="text-muted">{{ product.rating }} ({{ product.reviews_count }} reviews)</span>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-4">
+                <span class="fs-2 fw-bold text-primary">₹{{ product.price|floatformat:0 }}</span>
+                <small class="text-muted ms-2">incl. of all taxes</small>
+            </div>
+
+            <!-- Description -->
+            <p class="text-muted mb-4">{{ product.description }}</p>
+
+            <!-- Stock Status -->
+            <div class="mb-4">
+                {% if product.stock > 10 %}
+                <span class="text-success"><i class="bi bi-check-circle"></i> In Stock</span>
+                {% elif product.stock > 0 %}
+                <span class="text-warning"><i class="bi bi-exclamation-circle"></i> Only {{ product.stock }} left in stock</span>
+                {% else %}
+                <span class="text-danger"><i class="bi bi-x-circle"></i> Out of Stock</span>
+                {% endif %}
+            </div>
+
+            <!-- Add to Cart Form -->
+            <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mb-4">
+                {% csrf_token %}
+                <div class="row g-3 align-items-end">
+                    <div class="col-auto">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <div class="input-group" style="width: 130px;">
+                            <button type="button" class="btn btn-outline-secondary qty-btn" data-action="decrease">-</button>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}"
+                                   class="form-control text-center">
+                            <button type="button" class="btn btn-outline-secondary qty-btn" data-action="increase">+</button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary btn-lg w-100" {% if product.stock == 0 %}disabled{% endif %}>
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Features -->
+            <div class="border-top pt-4">
+                <h6 class="fw-bold mb-3">Features</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Free shipping on orders over ₹999</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> 7-day easy returns</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> 1-year warranty</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="mt-5 pt-5 border-top">
+        <h3 class="fw-bold mb-4">Related Products</h3>
+        <div class="row g-4">
+            {% for product in related_products %}
+            <div class="col-sm-6 col-lg-3">
+                {% include 'store/_product_card.html' %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const input = this.parentElement.querySelector('input');
+        const currentVal = parseInt(input.value) || 1;
+        const max = parseInt(input.max) || 99;
+
+        if (this.dataset.action === 'increase' && currentVal < max) {
+            input.value = currentVal + 1;
+        } else if (this.dataset.action === 'decrease' && currentVal > 1) {
+            input.value = currentVal - 1;
+        }
+    });
+});
+</script>
+{% endblock %}

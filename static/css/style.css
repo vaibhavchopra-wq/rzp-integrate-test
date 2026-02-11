@@ -1,0 +1,96 @@
+/* Custom styles for ShopDjango */
+
+/* Product card hover effect */
+.product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Category card hover */
+.hover-shadow {
+    transition: box-shadow 0.2s ease;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Form control focus */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+/* Quantity buttons */
+.qty-btn {
+    width: 38px;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+/* Footer links */
+footer a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+footer a:hover {
+    color: #fff !important;
+}
+
+/* Alert animations */
+.alert {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Badge on cart */
+.position-relative .badge {
+    font-size: 0.65rem;
+}
+
+/* Star ratings */
+.bi-star-fill,
+.bi-star {
+    font-size: 0.875rem;
+}
+
+/* Loading spinner */
+.spinner-border-sm {
+    margin-right: 0.5rem;
+}
+
+/* Sticky sidebar */
+@media (min-width: 992px) {
+    .sticky-top {
+        top: 100px;
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+
+    .lead {
+        font-size: 1rem;
+    }
+}
