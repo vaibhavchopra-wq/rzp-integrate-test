@@ -13,7 +13,6 @@ class Order(models.Model):
 
     PAYMENT_METHOD_CHOICES = [
         ('cod', 'Cash on Delivery'),
-        ('razorpay', 'Razorpay'),
     ]
 
     order_id = models.CharField(max_length=50, unique=True, editable=False)
@@ -40,10 +39,6 @@ class Order(models.Model):
         choices=PAYMENT_STATUS_CHOICES,
         default='pending'
     )
-    razorpay_order_id = models.CharField(max_length=100, blank=True)
-    razorpay_payment_id = models.CharField(max_length=100, blank=True)
-    razorpay_signature = models.CharField(max_length=200, blank=True)
-
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

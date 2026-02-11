@@ -71,15 +71,6 @@ def order_detail(request, order_id):
     return render(request, 'orders/detail.html', {'order': order})
 
 
-# ============================================
-# PAYMENT GATEWAY INTEGRATION POINT
-# ============================================
-# TODO: Add Razorpay payment views here
-# - create_razorpay_order: Create Razorpay order
-# - verify_payment: Verify payment signature
-# - payment_callback: Handle payment callback
-
-
 @require_POST
 def create_order_api(request):
     """API endpoint to create order (for AJAX requests)."""
