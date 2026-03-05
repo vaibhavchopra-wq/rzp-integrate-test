@@ -282,12 +282,12 @@ async function initiatePayment() {
     },
     shippingMethod: selectedShippingMethod,
     couponCode: coupon?.code,
-    paymentMethod: 'cod' // Default to COD, will be updated by payment gateway
+    paymentMethod: 'razorpay' // Will be updated after payment
   };
-  
+
   // Store order data for payment callback
   localStorage.setItem('pendingOrder', JSON.stringify(orderData));
-  
+
   // Calculate total for payment
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   let discount = 0;
@@ -298,44 +298,23 @@ async function initiatePayment() {
   }
   const tax = Math.round((subtotal - discount) * 0.18);
   const total = Math.round(subtotal - discount + tax + shippingCost);
-  
+
   // Store customer info for payment prefill
   localStorage.setItem('customerInfo', JSON.stringify(orderData.customerInfo));
   localStorage.setItem('paymentAmount', total);
-  
-  // ============================================
-  // PAYMENT GATEWAY INTEGRATION POINT
-  // ============================================
-  // Add Razorpay/Stripe integration here
-  // The payment gateway should:
-  // 1. Create an order on the backend
-  // 2. Open payment modal/redirect
-  // 3. On success, call completeOrder()
-  // 4. On failure, show error message
-  // ============================================
-  
-  // For now, create order with COD
-  try {
-    const response = await apiRequest('/api/orders/create', {
-      method: 'POST',
-      body: JSON.stringify(orderData)
-    });
-    
-    // Clear cart and redirect
-    localStorage.removeItem('cart');
-    localStorage.removeItem('appliedCoupon');
-    localStorage.removeItem('pendingOrder');
-    
-    showToast('Order placed successfully!', 'success');
-    
-    // Redirect to orders page after short delay
-    setTimeout(() => {
-      window.location.href = '/orders.html';
-    }, 1500);
-    
-  } catch (error) {
-    showToast('Failed to place order: ' + error.message, 'error');
-  }
+
+  // Call Razorpay payment
+  initiateRazorpayPayment(
+    total,
+    async (paymentResponse) => {
+      // On success: complete order
+      completeOrder(paymentResponse.paymentId, 'razorpay');
+    },
+    (error) => {
+      showToast('Payment failed: ' + error.message, 'error');
+      localStorage.removeItem('pendingOrder');
+    }
+  );
 }
 
 // Call this after successful payment

@@ -1,5 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const razorpayRoutes = require('./routes/razorpay');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
@@ -9,6 +11,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Razorpay API routes
+app.use('/api/razorpay', razorpayRoutes);
 
 // Data imports
 const products = require('./data/products');
